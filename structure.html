@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The 8's Catapult Pty Ltd — UX & Product Designer</title>
+<style>
+  :root{
+    --accent:#0366d6; --muted:#6b7280; --bg:#fff; --surface:#f7f8fa;
+    --max-w:1100px;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;color:#111;background:var(--bg)}
+  .container{max-width:var(--max-w);margin:0 auto;padding:24px}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+  nav a{margin-left:12px;color:var(--muted);text-decoration:none;font-size:0.95rem}
+  .hero{display:flex;flex-direction:column;gap:12px;padding:28px;border-radius:12px;background:linear-gradient(180deg,#fff, #fbfdff)}
+  .hero h1{margin:0;font-size:1.8rem}
+  .hero p{margin:0;color:var(--muted)}
+  .cta{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+  .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;border:0;cursor:pointer}
+  .btn.secondary{background:#e6eefc;color:var(--accent);border:1px solid #d7e9ff}
+  .grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
+  .card{background:var(--surface);padding:16px;border-radius:10px}
+  .services{display:flex;flex-direction:column;gap:10px}
+  .service{display:flex;flex-direction:column}
+  .testi{font-style:italic;color:var(--muted)}
+  .bottom-bar{position:fixed;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-around;padding:10px;background:#fff;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.08);z-index:60}
+  .social{display:flex;gap:10px;align-items:center}
+  .social a{color:var(--muted);text-decoration:none;font-size:18px}
+  /* modals */
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.4);z-index:80}
+  .modal[open]{display:flex}
+  .modal .dialog{background:#fff;padding:18px;border-radius:10px;min-width:280px;max-width:480px}
+  input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9ef;margin-top:8px}
+  @media(min-width:800px){
+    .grid{grid-template-columns:1fr 360px}
+    .hero{flex-direction:row;align-items:center;justify-content:space-between}
+    .hero h1{font-size:2rem}
+  }
+</style>
+</head>
+<body>
+<header class="container" role="banner">
+  <div>
+    <strong>The 8's Catapult Pty Ltd</strong>
+    <div style="color:var(--muted);font-size:0.9rem">UX & Product Designer</div>
+  </div>
+  <nav aria-label="Main navigation">
+    <a href="#services">Services</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#projects">Projects</a>
+    <span class="social" aria-hidden="false">
+      <a href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+      <a href="https://youtube.com/" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+      <a href="https://github.com/" target="_blank" rel="noopener" aria-label="GitHub">GH</a>
+      <a href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">LI</a>
+      <a href="https://quora.com/" target="_blank" rel="noopener" aria-label="Quora">Q</a>
+    </span>
+  </nav>
+</header>
+
+<main class="container" role="main">
+  <section class="hero card" aria-labelledby="hero-title">
+    <div>
+      <h1 id="hero-title">Design that turns visitors into customers</h1>
+      <p>Services, case studies, and upcoming projects. I design user friendly experiences and help teams ship faster.</p>
+      <div class="cta" role="group" aria-label="Primary actions">
+        <button class="btn" id="open-signup">Sign up</button>
+        <button class="btn secondary" id="open-buy">Buy a service</button>
+      </div>
+    </div>
+    <div style="min-width:200px;text-align:right;color:var(--muted)">
+      <div style="font-weight:600">Next launch</div>
+      <div id="next-launch" aria-live="polite">Loading predictions…</div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section id="services" class="card">
+      <h2>Services</h2>
+      <div class="services" id="services-list">
+        <!-- server-side injected services -->
+        {% for s in services %}
+          <div class="service" data-id="{{ s.id }}">
+            <strong>{{ s.title }}</strong>
+            <div style="color:var(--muted)">{{ s.desc }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <aside class="card">
+      <h3>Testimonials</h3>
+      {% for t in testimonials %}
+        <div class="testi" style="margin-bottom:10px">“{{ t.text }}” — <strong>{{ t.author }}</strong></div>
+      {% endfor %}
+      <hr>
+      <h4>Contact</h4>
+      <div style="color:var(--muted)">Email: <a href="mailto:hello@example.com">hello@example.com</a></div>
+    </aside>
+
+  </div>
+
+  <section id="projects" class="card" style="margin-top:16px">
+    <h2>Predicted upcoming projects</h2>
+    <div id="predictions">Loading…</div>
+  </section>
+</main>
+
+<!-- bottom bar -->
+<div class="bottom-bar" role="navigation" aria-label="Quick actions">
+  <button class="btn" id="bb-signup">Sign up</button>
+  <button class="btn secondary" id="bb-buy">Buy</button>
+  <button class="btn" id="bb-search">Search</button>
+</div>
+
+<!-- Modals -->
+<div class="modal" id="modal-signup" role="dialog" aria-modal="true" aria-labelledby="signup-title">
+  <div class="dialog">
+    <h3 id="signup-title">Sign up for updates</h3>
+    <form id="form-signup">
+      <label for="name">Name</label>
+      <input id="name" name="name" type="text" autocomplete="name" />
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required />
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" type="submit">Join</button>
+        <button type="button" id="close-signup" class="btn secondary">Close</button>
+      </div>
+      <div id="signup-msg" style="margin-top:8px;color:var(--muted)"></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modal-buy" role="dialog" aria-modal="true" aria-labelledby="buy-title">
+  <div class="dialog">
+    <h3 id="buy-title">Buy a service</h3>
+    <form id="form-buy">
+      <label for="service-select">Select service</label>
+      <select id="service-select" name="service">
+        {% for s in services %}
+          <option value="{{ s.title }}">{{ s.title }}</option>
+        {% endfor %}
+      </select>
+      <label for="buyer-email">Email</label>
+      <input id="buyer-email" type="email" />
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" type="submit">Checkout</button>
+        <button type="button" id="close-buy" class="btn secondary">Close</button>
+      </div>
+      <div id="buy-msg" style="margin-top:8px;color:var(--muted)"></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modal-search" role="dialog" aria-modal="true" aria-labelledby="search-title">
+  <div class="dialog">
+    <h3 id="search-title">Search site</h3>
+    <form id="form-search">
+      <label for="q">Query</label>
+      <input id="q" name="q" type="search" autocomplete="off" />
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" type="submit">Search</button>
+        <button type="button" id="close-search" class="btn secondary">Close</button>
+      </div>
+    </form>
+    <div id="search-results" style="margin-top:12px;color:var(--muted)"></div>
+  </div>
+</div>
+
+<script>
+  // Utility to open/close modals
+  function openModal(id){document.getElementById(id).setAttribute('open',''); document.getElementById(id).style.display='flex';}
+  function closeModal(id){const el=document.getElementById(id); el.removeAttribute('open'); el.style.display='none';}
+
+  // Hook buttons
+  document.getElementById('open-signup').onclick = () => openModal('modal-signup');
+  document.getElementById('bb-signup').onclick = () => openModal('modal-signup');
+  document.getElementById('close-signup').onclick = () => closeModal('modal-signup');
+
+  document.getElementById('open-buy').onclick = () => openModal('modal-buy');
+  document.getElementById('bb-buy').onclick = () => openModal('modal-buy');
+  document.getElementById('close-buy').onclick = () => closeModal('modal-buy');
+
+  document.getElementById('bb-search').onclick = () => openModal('modal-search');
+  document.getElementById('close-search').onclick = () => closeModal('modal-search');
+
+  // Signup form
+  document.getElementById('form-signup').onsubmit = async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const msg = document.getElementById('signup-msg');
+    msg.textContent = 'Saving…';
+    try {
+      const res = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({name, email})
+      });
+      const json = await res.json();
+      if (res.ok) {
+        msg.textContent = 'Thanks — you are signed up!';
+        setTimeout(()=>closeModal('modal-signup'),1200);
+      } else {
+        msg.textContent = json.error || 'Unable to sign up';
+      }
+    } catch (err) {
+      msg.textContent = 'Network error';
+    }
+  };
+
+  // Buy form
+  document.getElementById('form-buy').onsubmit = async (e) => {
+    e.preventDefault();
+    const item = document.getElementById('service-select').value;
+    const email = document.getElementById('buyer-email').value || 'guest@example.com';
+    const msg = document.getElementById('buy-msg');
+    msg.textContent = 'Processing…';
+    try {
+      const res = await fetch('/api/buy', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({item, email})
+      });
+      const json = await res.json();
+      if (res.ok) {
+        msg.innerHTML = `Order ${json.order_id} created. <a href="${json.checkout_url}">Go to checkout</a>`;
+      } else {
+        msg.textContent = json.error || 'Unable to create order';
+      }
+    } catch (err) {
+      msg.textContent = 'Network error';
+    }
+  };
+
+  // Search form
+  document.getElementById('form-search').onsubmit = async (e) => {
+    e.preventDefault();
+    const q = document.getElementById('q').value.trim();
+    const out = document.getElementById('search-results');
+    out.textContent = 'Searching…';
+    try {
+      const res = await fetch('/api/search?q=' + encodeURIComponent(q));
+      const json = await res.json();
+      const r = json.results;
+      let html = '';
+      if ((r.services && r.services.length) || (r.projects && r.projects.length)) {
+        if (r.services.length) html += '<strong>Services</strong><ul>' + r.services.map(s=>`<li>${s.title}</li>`).join('') + '</ul>';
+        if (r.projects.length) html += '<strong>Projects</strong><ul>' + r.projects.map(p=>`<li>${p.title}</li>`).join('') + '</ul>';
+      } else {
+        html = 'No results';
+      }
+      out.innerHTML = html;
+    } catch (err) {
+      out.textContent = 'Network error';
+    }
+  };
+
+  // Load predictions
+  async function loadPredictions(){
+    try {
+      const res = await fetch('/api/predict');
+      const json = await res.json();
+      const predictions = json.predictions || [];
+      const el = document.getElementById('predictions');
+      const nextLaunch = document.getElementById('next-launch');
+      if (!predictions.length) {
+        el.textContent = 'No predictions yet.';
+        nextLaunch.textContent = 'TBD';
+        return;
+      }
+      el.innerHTML = '<ul>' + predictions.map(p => `<li><strong>${p.title}</strong> — ${p.eta} <span style="color:var(--muted)">(${Math.round(p.confidence*100)}% confidence)</span></li>`).join('') + '</ul>';
+      nextLaunch.textContent = `${predictions[0].title} — ${predictions[0].eta}`;
+    } catch (err) {
+      document.getElementById('predictions').textContent = 'Unable to load predictions';
+      document.getElementById('next-launch').textContent = 'Error';
+    }
+  }
+  loadPredictions();
+
+  // Basic keyboard accessibility: Esc to close modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      ['modal-signup','modal-buy','modal-search'].forEach(closeModal);
+    }
+  });
+</script>
+</body>
+</html>
